@@ -1,0 +1,13 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: "otel-demo-client"
+  threads:
+    virtual:
+      enabled: true
+
+# logging:
+#   level:
+#     '[org.springframework]': DEBUG
+#debug: true  
