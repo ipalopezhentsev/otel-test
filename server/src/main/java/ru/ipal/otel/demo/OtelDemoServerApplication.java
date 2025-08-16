@@ -9,14 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 public class OtelDemoServerApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(OtelDemoServerApplication.class, args);
 	}
 
 	@GetMapping("/greet")
-	public String greet(@RequestParam String name) {
+	public String greet(@RequestParam String name, @RequestParam int delayMillis) throws InterruptedException {
+		Thread.sleep(delayMillis);
 		return "Hello " + name;
 	}
-
 }

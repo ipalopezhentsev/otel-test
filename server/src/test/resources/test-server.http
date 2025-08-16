@@ -1,0 +1,5 @@
+GET http://localhost:8080/greet?name=ilya&delayMillis=3000
+
+###
+GET http://localhost:8080/actuator/health
+

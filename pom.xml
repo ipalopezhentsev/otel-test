@@ -55,9 +55,57 @@
 						</excludes>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>io.github.download-maven-plugin</groupId>
+					<artifactId>download-maven-plugin</artifactId>
+					<version>2.0.0</version>
+					<executions>
+						<execution>
+							<id>get opentelemetry agent</id>
+							<phase>generate-resources</phase>
+							<goals>
+								<goal>wget</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<url>
+							https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.18.1/opentelemetry-javaagent.jar</url>
+						<outputDirectory>${project.build.directory}/otel-agent</outputDirectory>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.google.cloud.tools</groupId>
+					<artifactId>jib-maven-plugin</artifactId>
+					<version>3.4.6</version>
+					<configuration>
+						<from>
+							<image>eclipse-temurin:24-jre</image>
+						</from>
+						<to>
+							<image>${project.groupId}-${project.artifactId}:latest</image>
+						</to>
+						<extraDirectories>
+							<paths>
+								<path>${project.build.directory}/otel-agent</path>
+							</paths>
+						</extraDirectories>
+						<container>
+							<jvmFlags>
+								<jvmFlag>-javaagent:/opentelemetry-javaagent.jar</jvmFlag>
+							</jvmFlags>
+						</container>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>dockerBuild</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
-
-
 </project>
