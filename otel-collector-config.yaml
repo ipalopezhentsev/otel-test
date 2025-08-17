@@ -18,6 +18,12 @@ exporters:
     verbosity: basic
   zipkin:
     endpoint: http://zipkin:9411/api/v2/spans
+  prometheusremotewrite:
+    endpoint: "http://prometheus:9090/api/v1/write"
+  prometheus:
+    endpoint: 0.0.0.0:8889
+#    namespace: default #adds this prefix to every metric
+
 
 service:
   pipelines:
@@ -28,7 +34,7 @@ service:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [prometheusremotewrite,prometheus]
     logs:
       receivers: [otlp]
       processors: [batch]

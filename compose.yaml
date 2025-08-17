@@ -38,7 +38,7 @@ services:
     ports:
       # - 1888:1888 # pprof extension
       - 8888:8888 # Prometheus metrics exposed by the Collector
-      - 8889:8889 # Prometheus exporter metrics
+      - 8889:8889 # Prometheus exporter metrics  (http://localhost:8889/metrics)
       # - 13133:13133 # health_check extension
       - 4317:4317 # OTLP gRPC receiver
       - 4318:4318 # OTLP http receiver
@@ -64,3 +64,25 @@ services:
     ports:
       # Port used for the Zipkin UI and HTTP Api
       - 9411:9411
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.enable-remote-write-receiver"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000 #admin/grafana in web ui
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - grafana-storage:/var/lib/grafana
+volumes:
+  grafana-storage: {}
