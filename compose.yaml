@@ -9,6 +9,7 @@ services:
       OTEL_LOGS_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: otlp
       OTEL_TRACES_EXPORTER: otlp
+      # JAVA_TOOL_OPTIONS: "-Dotel.java.global-autoconfigure.enabled=true"
     # healthcheck:
     #   test: [ "CMD", "wget", "-qO", "-", "localhost:8080/actuator/health" ]
     #   start_period: 4s
@@ -24,6 +25,7 @@ services:
       OTEL_LOGS_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: otlp
       OTEL_TRACES_EXPORTER: otlp
+      # JAVA_TOOL_OPTIONS: "-Dotel.java.global-autoconfigure.enabled=true"
     # depends_on:
     #   server:
     #     # condition: service_healthy
