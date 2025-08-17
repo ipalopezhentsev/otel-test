@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.opentelemetry.instrumentation.annotations.SpanAttribute;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
+
 @SpringBootApplication
 @RestController
 public class OtelDemoServerApplication {
@@ -15,7 +18,14 @@ public class OtelDemoServerApplication {
 
 	@GetMapping("/greet")
 	public String greet(@RequestParam String name, @RequestParam int delayMillis) throws InterruptedException {
-		Thread.sleep(delayMillis);
+		if (delayMillis != 0) {
+			Thread.sleep(delayMillis);
+		}
+		return calcResponse(name);
+	}
+
+	@WithSpan
+	public String calcResponse(@SpanAttribute String name) {
 		return "Hello " + name;
 	}
 }

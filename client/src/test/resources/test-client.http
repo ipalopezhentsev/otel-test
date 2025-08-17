@@ -1,4 +1,4 @@
-POST http://localhost:8081/test?numRqs=10&delayMillis=10
+POST http://localhost:8081/test?numRqs=100&delayMillis=0
 
 ###
 GET http://localhost:8081/actuator/health
