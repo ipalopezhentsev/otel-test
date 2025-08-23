@@ -1,5 +1,15 @@
-POST http://localhost:8081/test?numRqs=100&delayMillis=0
+### burst
+POST http://localhost:8081/burst?numRqs=100&delayMillis=0
+
+### target rps
+POST http://localhost:8081/targetRps?targetRps=1000&testSeconds=600&warmupSeconds=30
+
 
 ###
 GET http://localhost:8081/actuator/health
 
+###query collector running in docker for data which prometheus scrapes
+GET http://localhost:8889/metrics
+
+###query prometheus(!) running in docker for exemplars gathered from collector
+GET http://localhost:9090/api/v1/query_exemplars?query=http_client_request_duration_seconds_bucket

@@ -1,4 +1,4 @@
-package ru.ipal.otel.demo;
+package ru.ipal.otel.demo.controller;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -17,12 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-public class CallTestController {
+public class BurstTestController {
 	@Autowired
 	private RestClient restClient;
 
-	@PostMapping("/test")
-	public void test(
+	@PostMapping("/burst")
+	public void testBurst(
 			@RequestParam int numRqs,
 			@RequestParam int delayMillis) throws InterruptedException, ExecutionException {
 		var tmStart = Instant.now();
