@@ -9,6 +9,8 @@ services:
       OTEL_LOGS_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: otlp
       OTEL_TRACES_EXPORTER: otlp
+      #disabled by default: https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/tag/v2.0.0
+      #OTEL_INSTRUMENTATION_MICROMETER_ENABLED: true
       # JAVA_TOOL_OPTIONS: "-Dotel.java.global-autoconfigure.enabled=true"
     # healthcheck:
     #   test: [ "CMD", "wget", "-qO", "-", "localhost:8080/actuator/health" ]
@@ -25,6 +27,7 @@ services:
       OTEL_LOGS_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: otlp
       OTEL_TRACES_EXPORTER: otlp
+      #OTEL_INSTRUMENTATION_MICROMETER_ENABLED: true
       # JAVA_TOOL_OPTIONS: "-Dotel.java.global-autoconfigure.enabled=true"
     # depends_on:
     #   server:
@@ -72,15 +75,18 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--web.enable-remote-write-receiver"
+      - "--enable-feature=exemplar-storage"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
     image: grafana/grafana
     ports:
-      - 3000:3000 #admin/grafana in web ui
+      - 3000:3000 #admin/admin in web ui
     restart: unless-stopped
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    # environment:
+      # - GF_SECURITY_ADMIN_USER=admin
+      # - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
       - ./datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - grafana-storage:/var/lib/grafana

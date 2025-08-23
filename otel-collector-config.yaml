@@ -16,6 +16,8 @@ exporters:
       insecure: true
   debug:
     verbosity: basic
+  debug/1:
+    verbosity: detailed
   zipkin:
     endpoint: http://zipkin:9411/api/v2/spans
   prometheusremotewrite:
@@ -30,11 +32,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, zipkin]
+      exporters: [otlp, zipkin, debug]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheusremotewrite,prometheus]
+      exporters: [prometheusremotewrite,prometheus, debug/1]
     logs:
       receivers: [otlp]
       processors: [batch]
