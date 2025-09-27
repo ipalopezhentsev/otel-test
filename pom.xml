@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.4</version>
+		<version>3.5.6</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ru.ipal</groupId>
@@ -17,24 +17,19 @@
 	<description>Demo project for Spring Boot</description>
 
 	<modules>
-		<module>server</module>
-		<module>client</module>
+		<module>client-micrometer</module>
+		<module>server-micrometer</module>
+		<module>client-otel-agent</module>
+		<module>server-otel-agent</module>
+		<module>utils</module>
 	</modules>
 
 	<properties>
-		<java.version>24</java.version>
+		<java.version>25</java.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			<!--this is needed only for spring starter, not agent-->
-			<!-- <dependency>
-				<groupId>io.opentelemetry.instrumentation</groupId>
-				<artifactId>opentelemetry-instrumentation-bom</artifactId>
-				<version>2.18.1</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency> -->
 			<dependency>
 				<groupId>io.opentelemetry.instrumentation</groupId>
 				<artifactId>opentelemetry-instrumentation-annotations</artifactId>
@@ -98,21 +93,21 @@
 					<version>3.4.6</version>
 					<configuration>
 						<from>
-							<image>eclipse-temurin:24-jre</image>
+							<image>amazoncorretto:25-jdk</image>
 						</from>
 						<to>
 							<image>${project.groupId}-${project.artifactId}:latest</image>
 						</to>
-						<extraDirectories>
+						<!-- <extraDirectories>
 							<paths>
 								<path>${project.build.directory}/otel-agent</path>
 							</paths>
-						</extraDirectories>
-						<container>
+						</extraDirectories> -->
+						<!-- <container>
 							<jvmFlags>
 								<jvmFlag>-javaagent:/opentelemetry-javaagent.jar</jvmFlag>
 							</jvmFlags>
-						</container>
+						</container> -->
 					</configuration>
 					<executions>
 						<execution>

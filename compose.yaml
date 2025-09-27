@@ -1,38 +1,54 @@
 services:
-  server:
-    image: ru.ipal-otel-demo-server:latest
-    ports:
-      - "8080:8080"
-    environment:
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://collector:4317"
-      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
-      OTEL_LOGS_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: otlp
-      OTEL_TRACES_EXPORTER: otlp
-      #disabled by default: https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/tag/v2.0.0
-      #OTEL_INSTRUMENTATION_MICROMETER_ENABLED: true
-      # JAVA_TOOL_OPTIONS: "-Dotel.java.global-autoconfigure.enabled=true"
-    # healthcheck:
-    #   test: [ "CMD", "wget", "-qO", "-", "localhost:8080/actuator/health" ]
-    #   start_period: 4s
 
-  client:
-    image: ru.ipal-otel-demo-client:latest
+  server-micrometer:
+    image: ru.ipal-server-micrometer:latest
+    mem_limit: 4g
     ports:
-      - "8081:8081"
+      - "8082:8082"
+    restart: unless-stopped
     environment:
-      SERVER_ADDR: "server:8080"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://collector:4317"
-      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
-      OTEL_LOGS_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: otlp
-      OTEL_TRACES_EXPORTER: otlp
-      #OTEL_INSTRUMENTATION_MICROMETER_ENABLED: true
-      # JAVA_TOOL_OPTIONS: "-Dotel.java.global-autoconfigure.enabled=true"
-    # depends_on:
-    #   server:
-    #     # condition: service_healthy
-    #     condition: service_started
+      JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+      # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseParallelGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+      # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseSerialGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+      # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseZGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+
+  client-micrometer:
+    image: ru.ipal-client-micrometer:latest
+    mem_limit: 4g
+    ports:
+      - "8083:8083"
+    restart: unless-stopped
+    environment:
+      SERVER_ADDR: "server-micrometer:8082"
+      JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+      # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseParallelGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+      # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseSerialGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+      # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseZGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+
+  # server-otel-agent:
+  #   image: ru.ipal-server-otel-agent:latest
+  #   ports:
+  #     - "8080:8080"
+  #   restart: unless-stopped
+  #   environment:
+  #     OTEL_EXPORTER_OTLP_ENDPOINT: "http://collector:4317"
+  #     OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+  #     OTEL_LOGS_EXPORTER: otlp
+  #     OTEL_METRICS_EXPORTER: otlp
+  #     OTEL_TRACES_EXPORTER: otlp
+
+  # client-otel-agent:
+  #   image: ru.ipal-client-otel-agent:latest
+  #   ports:
+  #     - "8081:8081"
+  #   restart: unless-stopped
+  #   environment:
+  #     SERVER_ADDR: "server-otel-agent:8080"
+  #     OTEL_EXPORTER_OTLP_ENDPOINT: "http://collector:4317"
+  #     OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+  #     OTEL_LOGS_EXPORTER: otlp
+  #     OTEL_METRICS_EXPORTER: otlp
+  #     OTEL_TRACES_EXPORTER: otlp
 
   collector:
     image: otel/opentelemetry-collector-contrib:0.132.2
@@ -46,6 +62,7 @@ services:
       - 4317:4317 # OTLP gRPC receiver
       - 4318:4318 # OTLP http receiver
       - 55679:55679 # zpages extension
+    restart: unless-stopped
 
   jaeger:
     image: cr.jaegertracing.io/jaegertracing/jaeger:2.9.0
@@ -53,20 +70,23 @@ services:
       - "16686:16686" #UI
       # - "4317:4317" #OTLP gRPC
       # - "4318:4318" #OTLP http
+    restart: unless-stopped
 
-  zipkin:
-    image: ghcr.io/openzipkin/zipkin-slim:${TAG:-latest}
-    container_name: zipkin
-    # Environment settings are defined here https://github.com/openzipkin/zipkin/blob/master/zipkin-server/README.md#environment-variables
-    environment:
-      - STORAGE_TYPE=mem
-      # Uncomment to enable self-tracing
-      # - SELF_TRACING_ENABLED=true
-      # Uncomment to increase heap size
-      # - JAVA_OPTS=-Xms128m -Xmx128m -XX:+ExitOnOutOfMemoryError
-    ports:
-      # Port used for the Zipkin UI and HTTP Api
-      - 9411:9411
+  # zipkin:
+  #   image: ghcr.io/openzipkin/zipkin-slim:${TAG:-latest}
+  #   container_name: zipkin
+  #   # Environment settings are defined here https://github.com/openzipkin/zipkin/blob/master/zipkin-server/README.md#environment-variables
+  #   environment:
+  #     - STORAGE_TYPE=mem
+  #     # Uncomment to enable self-tracing
+  #     # - SELF_TRACING_ENABLED=true
+  #     # Uncomment to increase heap size
+  #     # - JAVA_OPTS=-Xms128m -Xmx128m -XX:+ExitOnOutOfMemoryError
+  #   ports:
+  #     # Port used for the Zipkin UI and HTTP Api
+  #     - 9411:9411
+  #   restart: unless-stopped
+  #   mem_limit: 4g
 
   prometheus:
     image: prom/prometheus:v3.5.0
@@ -78,6 +98,7 @@ services:
       - "--enable-feature=exemplar-storage"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana
@@ -90,5 +111,6 @@ services:
     volumes:
       - ./datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - grafana-storage:/var/lib/grafana
+
 volumes:
   grafana-storage: {}

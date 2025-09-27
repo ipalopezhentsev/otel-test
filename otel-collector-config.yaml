@@ -18,8 +18,8 @@ exporters:
     verbosity: basic
   debug/1:
     verbosity: detailed
-  zipkin:
-    endpoint: http://zipkin:9411/api/v2/spans
+  # zipkin:
+  #   endpoint: http://zipkin:9411/api/v2/spans
   prometheusremotewrite:
     endpoint: "http://prometheus:9090/api/v1/write"
   prometheus:
@@ -32,11 +32,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, zipkin, debug]
+      # exporters: [otlp, zipkin, debug]
+      exporters: [otlp, debug]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheusremotewrite,prometheus, debug/1]
+      exporters: [prometheusremotewrite, prometheus, debug/1]
     logs:
       receivers: [otlp]
       processors: [batch]
