@@ -7,7 +7,15 @@ services:
       - "8082:8082"
     restart: unless-stopped
     environment:
-      JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+      JAVA_TOOL_OPTIONS: >-
+        -XX:+PrintFlagsFinal
+        -Xlog:gc
+        -XX:MaxGCPauseMillis=10000
+        -XX:GCTimeRatio=49
+        -XX:+UseG1GC
+        -XX:+UseCompactObjectHeaders
+        -XX:MaxRAMPercentage=75
+#        -XX:+PrintTieredEvents
       # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseParallelGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
       # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseSerialGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
       # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseZGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
@@ -20,7 +28,15 @@ services:
     restart: unless-stopped
     environment:
       SERVER_ADDR: "server-micrometer:8082"
-      JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
+      JAVA_TOOL_OPTIONS: >-
+        -XX:+PrintFlagsFinal
+        -Xlog:gc
+        -XX:MaxGCPauseMillis=10000
+        -XX:GCTimeRatio=49
+        -XX:+UseG1GC
+        -XX:+UseCompactObjectHeaders
+        -XX:MaxRAMPercentage=75
+#        -XX:+PrintTieredEvents
       # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseParallelGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
       # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseSerialGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
       # JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal -Xlog:gc -XX:MaxGCPauseMillis=10000 -XX:GCTimeRatio=49 -XX:+UseZGC -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=75
@@ -111,6 +127,15 @@ services:
     volumes:
       - ./datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - grafana-storage:/var/lib/grafana
+
+  loki:
+    image: grafana/loki:3.4.2
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+
 
 volumes:
   grafana-storage: {}

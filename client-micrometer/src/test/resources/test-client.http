@@ -1,5 +1,5 @@
 ### burst
-POST http://localhost:8083/burst?numRqs=1000&delayMillis=0
+POST http://localhost:8083/burst?numRqs=20000&delayMillis=0
 
 ### target rps
 POST http://localhost:8083/targetRps?targetRps=5000&testSeconds=3600&warmupSeconds=60

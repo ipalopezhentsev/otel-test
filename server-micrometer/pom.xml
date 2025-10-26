@@ -32,24 +32,33 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<!--this is just for metrics export, not traces-->
+			<!--this
+			is just for metrics export, not traces-->
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-otlp</artifactId>
 		</dependency>
 		<dependency>
-			<!--for @Observed-->
+			<!--for
+			@Observed-->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 		<dependency>
-			<!--prepare traces using otel api-->
+			<!--prepare
+			traces using otel api-->
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-tracing-bridge-otel</artifactId>
 		</dependency>
 		<dependency>
-			<!--export otel tracing(!) to otlp -->
+			<!--export
+			otel tracing(!) to otlp -->
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporter-otlp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ru.ipal</groupId>
+			<artifactId>spring-otel-logs</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

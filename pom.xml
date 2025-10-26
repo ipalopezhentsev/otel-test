@@ -22,6 +22,7 @@
 		<module>client-otel-agent</module>
 		<module>server-otel-agent</module>
 		<module>utils</module>
+		<module>spring-otel-logs</module>
 	</modules>
 
 	<properties>

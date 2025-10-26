@@ -54,6 +54,10 @@ management:
     tracing:
       endpoint: http://collector:4317/v1/traces
       transport: grpc
+    logging:
+      endpoint: http://collector:4317/v1/logs
+      transport: grpc
+      
   tracing:
     sampling:
       probability: 0.1
